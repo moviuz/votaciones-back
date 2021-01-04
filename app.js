@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
+var http = require('http').Server(app);
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const io = require('socket.io')();
-var http = require('http').Server(app);
-const cors= require('cors')
+const io = require('socket.io')(http, {cors: {origin:'*'}});
+const cors = require('cors')
 const { Server } = require('socket.io')
 //const io = new Server();
 require('dotenv/config');
@@ -22,10 +22,14 @@ const connectionParams={
 const userRoute = require('./routes/user')
 app.use('/user', userRoute)
 
+
 //Sockets
-io.on('conection', socket => { 
+io.on('connection', socket => { 
     console.log("Nuevo socket conectado")
 
+    socket.emit('newMessage', {
+        text:'WHAT'
+    })
     socket.on('increment', (votacionTotal) => { 
         console.log("increment")
         io.socket.emit("COUNTER_INCREMENT", votacionTotal +1)
@@ -33,17 +37,21 @@ io.on('conection', socket => {
     socket.on('decrement', (votacionTotal) => { 
         console.log("decrement")
         io.socket.emit("COUNTER_DECREMENT", votacionTotal -1)
+    })
+    socket.on('newMessage', (data) => { 
+        console.log("mensajenuevoSOCKET")
+        socket.emit('newMessage', {
+            text:data.data + 'server '
+        })
     } )
 })
 
-http.listen(5000, () => { 
-    console.log("listening")
-})
+
 
 //DB conect
 mongoose.connect(process.env.DB_CONECT,
     connectionParams,
     () => console.log('connect to DB')
 )
-app.listen(4000);
+http.listen(3001);
 
