@@ -1,17 +1,15 @@
-const express = require('express');
-const app = express();
+const app  = require('express');
 var http = require('http').Server(app);
-const io = require('socket.io')(http, {cors: {origin:'*'}});
-const cors = require('cors')
+const io = require('socket.io')(http);
+
+
+const cors= require('cors')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-
-
 //const io = new Server();
 require('dotenv/config');
 app.use(bodyParser.json())
 app.use(cors())
-
 
 //configuration
 const connectionParams={
@@ -20,19 +18,14 @@ const connectionParams={
     useUnifiedTopology: true 
 }
 
-
 //Import routs middleware
 const userRoute = require('./routes/user')
 app.use('/user', userRoute)
 
 //Sockets
 io.on('conection', socket => { 
-    socket.emit('newMessage', {
-        text:'WHATS'
-    })
     console.log("Nuevo socket conectado")
- 
- 
+
     socket.on('increment', (votacionTotal) => { 
         console.log("increment")
         io.socket.emit("COUNTER_INCREMENT", votacionTotal +1)
@@ -40,22 +33,19 @@ io.on('conection', socket => {
     socket.on('decrement', (votacionTotal) => { 
         console.log("decrement")
         io.socket.emit("COUNTER_DECREMENT", votacionTotal -1)
-    })
-    
-    socket.on('newMessage', (data) => { 
-        console.log(data),
-        consoel.log('eneBack')
-    })
+    } )
 })
 
+http.listen(5000, () => { 
+    console.log("listening5000")
+})
 
 //DB conect
 mongoose.connect(process.env.DB_CONECT,
     connectionParams,
     () => console.log('connect to DB')
 )
-
-http.listen(3001, () => { 
-    console.log('liestining3001')
+server.listen(4000, () => { 
+    console.log('liestining4000')
 });
 
