@@ -41,7 +41,7 @@ io.on('connection', socket => {
     socket.on('newMessage', (data) => { 
         console.log("mensajenuevoSOCKET")
         socket.emit('newMessage', {
-            text:data.data + 'server '
+            text:data.data + 'SERVER FERCHO '
         })
     } )
 })
