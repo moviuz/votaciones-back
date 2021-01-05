@@ -15,4 +15,11 @@ const UserSchema = mongoose.Schema({
     },
 })
 
+UserSchema.methods.toJSON = function () { 
+    let user = this;
+    let userObject = user.toObject();
+    delete userObject.password;
+    return userObject
+}
+
 module.exports = mongoose.model('Users', UserSchema)
