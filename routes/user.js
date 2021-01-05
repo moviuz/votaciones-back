@@ -13,7 +13,6 @@ router.get('/hola', (req, res) => {
 }) 
 
 router.post('/',
-    //Encriptar contraseña
     [check('email').exists().withMessage('Falta agregar el correo').isEmail().withMessage('No es un correo valido').custom(async (email) => { 
         const existingUser =  await User.findOne({ email })       
         if (existingUser) { 
@@ -24,7 +23,6 @@ router.post('/',
     check('name').exists().withMessage('falta agregar nombre').isString().withMessage('No es un formato valido')
     ],
     async (req, res) => { 
- 
     const salt = await bcrypt.genSalt(10);
     const hasedPassword = await bcrypt.hash(req.body.password,salt)
     console.log(req.body)
@@ -58,13 +56,16 @@ router.post('/login', [check('email').exists().withMessage('Falta agregar el cor
             return res.json({ ok: false, errors: { data: [errorMsg] } })
             //return res.status(200).json({ ok: false, errors: { assdw: [errorMsg]} })
         } else {
-
-            const userData = await User.findOne({ email:email })
-            if (!userData) return res.json({ok: false, message:'El correo no existe'})
+            console.log(email, password)
+            const userData = await User.findOne({ email: req.body.email })
+            console.log(2)
+            console.log(userData)
+            console.log(3)
+            if (!userData) return res.json({ ok: false, errors: { message: ['El correo no esta registrado'] } })
             
-            const validPass = await bcrypt.compare(password , userData.password)
-            if (!validPass) return res.json({ ok: false, message: 'Contraseña incorrecta' })
-            return res.json({message:'Login exitoso'})
+            const validPass = await bcrypt.compare(password, userData.password)
+            if (!validPass) { res.json({ ok: false, errors: { message: ['Contraseña incorrecta'] } }) }
+            else {return res.json({message:'Bienvenido' +' '+userData.name })}  
         }
     }
 )
