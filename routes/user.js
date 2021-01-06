@@ -4,6 +4,7 @@ const User = require('../models/User')
 const { check, validationResult } = require('express-validator')
 const io = require('socket.io')
 const bcrypt = require('bcryptjs'); 
+const jwt = require('jsonwebtoken')
 
 router.get('/', (req, res) => { 
     res.send('onUsersRoute')
@@ -64,8 +65,13 @@ router.post('/login', [check('email').exists().withMessage('Falta agregar el cor
             if (!userData) return res.json({ ok: false, errors: { message: ['El correo no esta registrado'] } })
             
             const validPass = await bcrypt.compare(password, userData.password)
-            if (!validPass) { res.json({ ok: false, errors: { message: ['Contraseña incorrecta'] } }) }
-            else {return res.json({message:'Bienvenido' +' '+userData.name })}  
+            if (!validPass) { res.json({ ok: false, error: { message: ['Contraseña incorrecta'] } }) }
+            else {
+                const token = jwt.sign({ _id: userData.id }, process.env.SECRET_TOKEN);
+                res.json({ userData, token: token })
+                //res.header('auth-token', token).json({userData, token:token})
+                //return res.status(200).json({ userData})
+            }  
         }
     }
 )

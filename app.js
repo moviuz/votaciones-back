@@ -6,6 +6,8 @@ const bodyParser = require('body-parser')
 const io = require('socket.io')(http, {cors: {origin:'*'}});
 const cors = require('cors')
 const { Server } = require('socket.io')
+const userRoute = require('./routes/user')
+const askRoute = require('./routes/preguntas')
 //const io = new Server();
 require('dotenv/config');
 app.use(bodyParser.json())
@@ -19,8 +21,9 @@ const connectionParams={
 }
 
 //Import routs middleware
-const userRoute = require('./routes/user')
-app.use('/user', userRoute)
+
+app.use('/user', userRoute);
+app.use('/ask', askRoute);
 
 
 //Sockets
