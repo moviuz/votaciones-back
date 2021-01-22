@@ -43,10 +43,17 @@ io.on('connection', socket => {
     })
     socket.on('newMessage', (data) => { 
         console.log("mensajenuevoSOCKET")
-        socket.emit('newMessage', {
-            text:data.data + 'SERVER FERCHO '
+        socket.broadcast.emit('newMessage', {
+            survey: data
         })
-    } )
+        console.log(data)
+    })
+    
+    socket.on('newSurvey', (data) => {
+        socket.emit('newSurvey', {
+            data:data
+        })
+    })
 })
 
 

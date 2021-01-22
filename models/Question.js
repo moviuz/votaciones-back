@@ -5,6 +5,18 @@ const QuestionSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    answerOne: {
+        type: String,
+        required: true
+    },
+    answerTwo: {
+        type: String,
+        require: true
+    },
+    answerTree: {
+        type: String,
+        required: true
+    }
 })
 
-module.exports = mongoose.model('Users', UserSchema)
+module.exports = mongoose.model('Questions', QuestionSchema)
