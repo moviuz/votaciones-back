@@ -40,10 +40,10 @@ router.post('/',
     }); 
     try { 
         const savePost = await user.save();
-        return res.json({message:'Registro Exitoso'})
+        return res.json({ ok: true, payload: { message: 'Registro Exitoso'} })
         
     }
-    catch (err) { res.json({ message: err }) }
+    catch (err) { res.json({ data: err }) }
 }
 })
 
@@ -62,10 +62,12 @@ router.post('/login', [check('email').exists().withMessage('Falta agregar el cor
             console.log(2)
             console.log(userData)
             console.log(3)
-            if (!userData) return res.json({ ok: false, errors: { message: ['El correo no esta registrado'] } })
+            if (!userData) return res.json({ ok: false, error: { message: ['El correo no esta registrado'] } })
             
             const validPass = await bcrypt.compare(password, userData.password)
-            if (!validPass) { res.json({ ok: false, error: { message: ['Contraseña incorrecta'] } }) }
+            if (!validPass) {
+               return res.json({ ok: false, errors: { data: ['Contraseña incorrecta'] } })
+            }
             else {
                 const token = jwt.sign({ _id: userData.id }, process.env.SECRET_TOKEN);
                 res.json({ userData, token: token })

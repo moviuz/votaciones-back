@@ -16,7 +16,7 @@ const QuestionSchema = mongoose.Schema({
     answerTree: {
         type: String,
         required: true
-    }
+    },
 })
 
 module.exports = mongoose.model('Questions', QuestionSchema)
